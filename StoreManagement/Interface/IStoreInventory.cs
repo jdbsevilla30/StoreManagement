@@ -1,15 +1,21 @@
-﻿//using BackupService.Data.Model.BackupService;
-//using File_Backup_Service.Dtos;
+﻿using File_Backup_Service.Repositories;
+using StoreManagement.Data.Model.StoreManagement;
+using StoreManagement.Dtos;
 
 namespace StoreManagement.Interface
 {
-    public interface IStoreInventory
+    public interface IStoreInventory 
     {
-        //public Task<List<FileDirectory>> GetBackupDirectory();
-        //public bool DuplicateCheck(FileDirectory fileDirectory);
-        //public void AddBackupDirectory(FileDirectory fileDirectory);
-        //public void UpdateBackupDirectory(FileDirectory fileDirectory);
-        //public void DeleteBackupDirectory(FileDirectory fileDirectory);
+        public Task<List<Product>> GetProductList(StoreViewDto storeView);
+        public bool DuplicateCheck(Product product);
+        public void AddProduct(Product product);
+        public void UpdateProduct(Product product);
+        public void DeleteProduct(Product product);
+        public  Task<List<ProductCategory>> GetCategory();
+
+
+
+
 
     }
 }

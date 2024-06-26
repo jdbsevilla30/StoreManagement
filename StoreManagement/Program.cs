@@ -1,15 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using StoreManagement.Helper;
 using StoreManagement.Interface;
-
+using StoreManagement.Data.Model.StoreManagement;
+using StoreManagement;
+using File_Backup_Service.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddDbContext<StoreManagementContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

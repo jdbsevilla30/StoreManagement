@@ -3,5 +3,6 @@
     public interface IUnitOfWork
     {
         IStoreInventory storeInventory { get; }
+        Task<bool> Complete();
     }
 }

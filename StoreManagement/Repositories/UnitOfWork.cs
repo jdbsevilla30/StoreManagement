@@ -1,28 +1,30 @@
 ﻿
 using StoreManagement.Interface;
+using StoreManagement.Data.Model;
+using StoreManagement.Data.Model.StoreManagement;
 
 
 namespace File_Backup_Service.Repositories
 {
-    public class UnitOfWork //: IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        //private readonly storeInventory _fileBackupServiceContext;
+        private readonly StoreManagementContext _storeManagementContext;
 
-        //public UnitOfWork(FileBackupServiceContext fileBackupServiceContext)
-        //{
-        //    _fileBackupServiceContext = fileBackupServiceContext;
-        //}
+        public UnitOfWork(StoreManagementContext storeManagementContext)
+        {
+            _storeManagementContext = storeManagementContext;
+        }
 
-        //public IStoreInventory storeInventory => new StoreInventory(_fileBackupServiceContext);
+        public IStoreInventory storeInventory => new StoreInventoryRepo(_storeManagementContext);
 
-        //public async Task<bool> Complete()
-        //{
-        //    return await _fileBackupServiceContext.SaveChangesAsync() > 0;
-        //}
+        public async Task<bool> Complete()
+        {
+            return await _storeManagementContext.SaveChangesAsync() > 0;
+        }
 
-        //public void Dispose()
-        //{
-        //    _fileBackupServiceContext.Dispose();
-        //}
+        public void Dispose()
+        {
+            _storeManagementContext.Dispose();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-
+using StoreManagement.Dtos;
+using StoreManagement.Data.Model.StoreManagement;
 
 namespace StoreManagement.Helper
 {
@@ -7,10 +8,9 @@ namespace StoreManagement.Helper
     {
         public AutoMapperProfile()
         {
-            //file backup service mapping
-           // CreateMap<FileDirectoryDto, FileDirectory>();
-        }
+            CreateMap<StoreInventoryDto, Product>().ReverseMap();
 
+        }
 
     }
 }
