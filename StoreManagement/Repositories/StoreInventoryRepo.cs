@@ -3,7 +3,7 @@ using StoreManagement.Data.Model.StoreManagement;
 using StoreManagement.Dtos;
 using StoreManagement.Interface;
 
-namespace File_Backup_Service.Repositories;
+namespace StoreManagement.Repositories;
 public class StoreInventoryRepo : IStoreInventory
 {
 
