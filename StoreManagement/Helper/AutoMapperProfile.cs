@@ -9,7 +9,7 @@ namespace StoreManagement.Helper
         public AutoMapperProfile()
         {
             CreateMap<StoreInventoryDto, Product>().ReverseMap();
-
+            CreateMap<DataLoggerDto, ErrorLog>().ReverseMap();
         }
 
     }
