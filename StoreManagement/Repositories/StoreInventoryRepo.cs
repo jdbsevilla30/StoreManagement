@@ -6,7 +6,6 @@ using StoreManagement.Interface;
 namespace StoreManagement.Repositories;
 public class StoreInventoryRepo : IStoreInventory
 {
-
    private readonly StoreManagementContext _context;
 
     public StoreInventoryRepo(StoreManagementContext context)
@@ -23,8 +22,6 @@ public class StoreInventoryRepo : IStoreInventory
     public async Task<List<Product>> GetProductList(StoreViewDto product)
     {
         var isAvailable = product.IsAvailable == "True" ? true : false;
-
-      
 
         var productList = _context.Products.OrderByDescending(x => x.Id).ToList();
 

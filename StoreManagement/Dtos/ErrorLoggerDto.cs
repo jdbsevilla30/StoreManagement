@@ -1,6 +1,6 @@
 ﻿namespace StoreManagement.Dtos
 {
-    public class DataLoggerDto
+    public class ErrorLoggerDto
     {
         public string? User { get; set; }
         public DateTime Date { get; set; }  

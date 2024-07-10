@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using StoreManagement.Dtos;
 using StoreManagement.Interface;
 using StoreManagement.Data.Model.StoreManagement;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace StoreManagement.Controllers
 {
@@ -13,11 +16,15 @@ namespace StoreManagement.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IErrorLoggerFactory _createErrorLog;
+        private readonly IActivityLoggerFactory _createActivityLog;
 
-        public StoreInventoryController(IUnitOfWork unitOfWork, IMapper mapper)
+        public StoreInventoryController(IUnitOfWork unitOfWork, IMapper mapper, IErrorLoggerFactory errorLogger, IActivityLoggerFactory activityLogger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _createErrorLog = errorLogger;
+            _createActivityLog = activityLogger;
         }
 
         [HttpGet("GetProductList")]
@@ -47,17 +54,10 @@ namespace StoreManagement.Controllers
             }
             catch (Exception ex)
             {
-                var errors = new ErrorLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    ErrorMessage = $"Product fetching failed: {ex.Message}",
-                    Module = "Products Module"
-                };
-
-                _unitOfWork.errorLogger.LogError(errors);
+                var errors = _createErrorLog.Create("User", DateTime.Now, "Error fetching data", "Store View");
+                var errorData = _mapper.Map<ErrorLog>(errors);
+                _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
-
                 return BadRequest("Product fetching failed: " + ex.Message.ToString());
             }
         }
@@ -77,28 +77,22 @@ namespace StoreManagement.Controllers
 
                 _unitOfWork.storeInventory.AddProduct(newProduct);
 
-                var activity = new ActivityLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    Activity = $"added new product {newProduct.ProductName} in ",
-                    Module = "Products Module"
-                };
-                _unitOfWork.activityLogger.LogActivity(activity);
+                var activity = _createActivityLog.Create
+                    ("User", DateTime.Now, $"added new product {newProduct.ProductName} in ", "Module");
+
+                var activityLog = _mapper.Map<ActivityLog>(activity);
+
+                _unitOfWork.activityLogger.LogActivity(activityLog);
                 await _unitOfWork.Complete();
                 return Ok(200);
             }
             catch (Exception ex)
             {
-                var errors = new ErrorLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    ErrorMessage = $"Adding of product failed: {ex.Message}",
-                    Module = "Products Module"
-                };
+                var errors = _createErrorLog.Create
+                    ("Username", DateTime.Now, $"Update error: {ex.Message}", "Products Module");
 
-                _unitOfWork.errorLogger.LogError(errors);
+                var errorData = _mapper.Map<ErrorLog>(errors);
+                _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
                 return BadRequest("Adding of product failed: " + ex.Message.ToString());
             }
@@ -117,29 +111,20 @@ namespace StoreManagement.Controllers
                 }
                 _unitOfWork.storeInventory.UpdateProduct(updateProduct);
 
-                var activity = new ActivityLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    Activity = $"Updating of product failed: {updateProduct.ProductName} in ",
-                    Module = "Products Module"
-                };
-                _unitOfWork.activityLogger.LogActivity(activity);
+                var activity = _createActivityLog.Create
+                    ("User", DateTime.Now, $"Updating of product failed: {updateProduct.ProductName} in ", "Products module");
+                var activityLog = _mapper.Map<ActivityLog>(activity);
+
+                _unitOfWork.activityLogger.LogActivity(activityLog);
 
                 await _unitOfWork.Complete();
                 return Ok(200);
             }
             catch (Exception ex)
             {
-                var errors = new ErrorLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    ErrorMessage = $"Update error: {ex.Message}",
-                    Module = "Products Module"
-                };
-
-                _unitOfWork.errorLogger.LogError(errors);
+                var errors = _createErrorLog.Create("User", DateTime.Now, $"Updating of product failed: {ex.Message} in ", "Products module");
+                var errorData = _mapper.Map<ErrorLog>(errors);
+                _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
                 return BadRequest("Updating of product failed: " + ex.Message.ToString());
             }
@@ -150,6 +135,13 @@ namespace StoreManagement.Controllers
         {
             try
             {
+                var activity = _createActivityLog.Create("User", DateTime.Now, $"Updating of product failed: {product.ProductName} in ", "Products module");
+
+
+                var activityLog = _mapper.Map<ActivityLog>(activity);
+
+                _unitOfWork.activityLogger.LogActivity(activityLog);
+
                 var deleteProduct = _mapper.Map<Product>(product);
                 _unitOfWork.storeInventory.DeleteProduct(deleteProduct);
                 await _unitOfWork.Complete();
@@ -157,15 +149,11 @@ namespace StoreManagement.Controllers
             }
             catch (Exception ex)
             {
-                var errors = new ErrorLog()
-                {
-                    User = "User",
-                    Date = DateTime.Now,
-                    ErrorMessage = $"Deletion of product failed: {ex.Message}",
-                    Module = "Products Module"
-                };
+                var errors = _createErrorLog.Create("User", DateTime.Now, $"Deletion of product failed: {ex.Message}", "Products Module");
 
-                _unitOfWork.errorLogger.LogError(errors);
+                var errorData = _mapper.Map<ErrorLog>(errors);
+
+                _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
                 return BadRequest("Deletion of product failed..." + ex.Message.ToString());
             }
