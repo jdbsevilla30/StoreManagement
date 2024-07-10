@@ -3,7 +3,7 @@ using StoreManagement.Interface;
 
 namespace StoreManagement.Helper
 {
-    public class ActivityLogger : IActivityLoggerFactory
+    public class ActivityLoggerFactory : IActivityLoggerFactory
     {
         public ActivityLoggerDto Create(string? user, DateTime dateTime, string message, string module)
         {

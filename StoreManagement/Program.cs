@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<IErrorLoggerFactory, ErrorLoggerFactory>();
+builder.Services.AddTransient<IActivityLoggerFactory, ActivityLoggerFactory>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 builder.Services.AddControllers();

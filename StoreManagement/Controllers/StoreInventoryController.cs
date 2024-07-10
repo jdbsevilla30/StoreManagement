@@ -54,7 +54,7 @@ namespace StoreManagement.Controllers
             }
             catch (Exception ex)
             {
-                var errors = _createErrorLog.Create("User", DateTime.Now, "Error fetching data", "Store View");
+                var errors = _createErrorLog.Create("User", DateTime.Now, "Product fetching failed in ", "Store View");
                 var errorData = _mapper.Map<ErrorLog>(errors);
                 _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
@@ -94,7 +94,7 @@ namespace StoreManagement.Controllers
                 var errorData = _mapper.Map<ErrorLog>(errors);
                 _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
-                return BadRequest("Adding of product failed: " + ex.Message.ToString());
+                return BadRequest("Adding of product failed: " + ex.Message);
             }
         }
 
@@ -103,6 +103,7 @@ namespace StoreManagement.Controllers
         {
             try
             {
+
                 var updateProduct = _mapper.Map<Product>(product);
                 var isDuplicateProduct = _unitOfWork.storeInventory.DuplicateCheck(updateProduct);
                 if (isDuplicateProduct)
@@ -112,7 +113,7 @@ namespace StoreManagement.Controllers
                 _unitOfWork.storeInventory.UpdateProduct(updateProduct);
 
                 var activity = _createActivityLog.Create
-                    ("User", DateTime.Now, $"Updating of product failed: {updateProduct.ProductName} in ", "Products module");
+                    ("User", DateTime.Now, $"Update succesful for: {updateProduct.ProductName} in ", "Products module");
                 var activityLog = _mapper.Map<ActivityLog>(activity);
 
                 _unitOfWork.activityLogger.LogActivity(activityLog);
@@ -122,6 +123,7 @@ namespace StoreManagement.Controllers
             }
             catch (Exception ex)
             {
+  
                 var errors = _createErrorLog.Create("User", DateTime.Now, $"Updating of product failed: {ex.Message} in ", "Products module");
                 var errorData = _mapper.Map<ErrorLog>(errors);
                 _unitOfWork.errorLogger.LogError(errorData);
@@ -135,7 +137,7 @@ namespace StoreManagement.Controllers
         {
             try
             {
-                var activity = _createActivityLog.Create("User", DateTime.Now, $"Updating of product failed: {product.ProductName} in ", "Products module");
+                var activity = _createActivityLog.Create("User", DateTime.Now, $"Deleted {product.ProductName} successfully in ", "Products module");
 
 
                 var activityLog = _mapper.Map<ActivityLog>(activity);
@@ -150,12 +152,10 @@ namespace StoreManagement.Controllers
             catch (Exception ex)
             {
                 var errors = _createErrorLog.Create("User", DateTime.Now, $"Deletion of product failed: {ex.Message}", "Products Module");
-
                 var errorData = _mapper.Map<ErrorLog>(errors);
-
                 _unitOfWork.errorLogger.LogError(errorData);
                 await _unitOfWork.Complete();
-                return BadRequest("Deletion of product failed..." + ex.Message.ToString());
+                return BadRequest("Deletion of product failed: " + ex.Message);
             }
         }
 
